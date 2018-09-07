@@ -1,0 +1,78 @@
+1、操作系统信息
+   systeminfo | findstr "OS"
+   识别系统架构：echo %PROCESSOR_ARCHITECTURE%
+   环境变量：SET
+   查看特定用户的信息：net user  =>获取所有的用户
+                    net user administrator =>
+2、获取网络信息：
+   基础知识：IPV4中，0.0.0.0地址被用于表示一个无效的，未知的或者不可用的目标。
+   * 在服务器中，0.0.0.0指的是本机上的所有IPV4地址，如果一个主机有两个IP地址，192.168.1.1 和 10.1.2.1，并且该主机上的一个服务监听的地址是0.0.0.0,那么通过两个ip地址都能够访问该服务。
+   * 在路由中，0.0.0.0表示的是默认路由，即当路由表中没有找到完全匹配的路由的时候所对应的路由。
+   查看路由信息：route print
+   查看ARP缓存信息：arp -A
+   查看防火墙规则：netstat -ano
+                netsh firewall show config
+                netsh firewall show state
+
+3、应用程序及服务信息：
+   查看计划任务： schtasks /QUERY /fo LIST /v
+   调整GBK编码为437美国编码：chcp 437
+   然后：schtasks /QUERY /fo LIST /v
+   查看服务端进程：tasklist /SVC
+   查看安装驱动：DRIVERQUERY
+   查看安装程序和版本信息（漏洞利用线索）：wmic product list brief
+   查看服务、进程和启动程序信息：wmic service list brief
+   wmic process list brief
+   wmic startup list brief
+   查看.msi程序的执行权限：
+
+    C:\Users\thel3l> reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+    C:\Users\thel3l> reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+    查看是否设置有setuid和setgid：
+    C:\Users\thel3l>
+    reg query HKEY_Local_Machine\System\CurrentControlSet\Services\NfsSvr\Parameters\SafeSetUidGidBits
+    查看安装补丁和时间信息：
+    C:\Users\thel3l> wmic qfe get Caption,Description,HotFixID,InstalledOn
+    查看特定漏洞补丁信息：
+    C:\Users\thel3l> wmic qfe get Caption,Description,HotFixID,InstalledOn | findstr /C:"KBxxxxxxx"
+
+4、敏感数据和目录
+   查看密码文件或其他敏感文件：
+   cd /
+   dir /b/s password.txt
+   dir /b/s config.*
+   findstr /si password *.xml *.ini *.txt
+   findstr /si login *.xml *.ini *.txt
+
+   以下是无人值守安装文件：
+   C:\sysprep.inf
+   C:\sysprep\sysprep.xml
+   C:\Windows\Panther\Unattend\Unattended.xml
+   C:\Windows\Panther\Unattended.xml
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

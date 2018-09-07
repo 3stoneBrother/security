@@ -1,0 +1,32 @@
+1、安装Apache
+   yum install httpd
+   service /sbin/httpd start
+
+2、安装Mysql
+   yum install mysql mysql-server
+   启动：service /sbin/mysqld start
+   ## 解决mysqld命令找不到的情况
+   # wget http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+   # rpm -ivh mysql-community-release-el7-5.noarch.rpm
+   # yum install mysql-community-server
+   ## 修改密码
+   mysql -u root
+   mysql> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpass');
+
+3、安装PHP5
+   yum install php
+   重新启动apache 以使PHP生效
+   service /sbin/apache start
+   这时，Apache已经可以解析执行php脚本了。由于Apache的默认网站根目录位于：/var/www/html/，因此在此目录建立一个info.php用来测试Apache+PHP的正确安装与否：
+   echo "<?php phpinfo(); ?>" > /var/www/html/info.php
+   # 测试虚拟机IP地址
+   http://172.16.167.167/info.php
+   测试完成后：service httpd restart
+
+4、最后还需要将LAMP组件设置为自动启动：
+   chkconfig --levels 2345 httpd on
+   chkconfig --levels 2345 mysqld on
+
+5、access denied for user ''@'localhost' to database
+   mysql -u root -p
+   输入密码即可

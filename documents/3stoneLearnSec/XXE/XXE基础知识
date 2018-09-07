@@ -1,0 +1,18 @@
+XXE：XML External Entity:XML外部实体，外部实体攻击
+1、XML用于标记电子文件使其具有结构性的标记语言，可用来标记数据，定义数据类型。
+   XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素。
+2、DTD：Document Type Definition 即文档类型定义，用来为XML文档定义语义约束。
+   2.1 DTD内部声明：<!DOCTYPE 根元素 [元素声明]>
+   2.2 DTD外部声明：<!DOCTYPE 根元素名称 SYSTEM "外部声明的URI">
+   2.3 引用公共DTD：<!DOCTYPE 根元素名称 PUBLIC “DTD标识名” “公用DTD的URI”>
+3、DTD实体声明：
+   3.1 内部实体声明: 内部实体是指在一个实体中定义的另一个实体，也就是嵌套定义。
+                  <!ENTITY 实体名称 "实体的值">
+   3.2 外部实体声明 <!ENTITY 实体名称 SYSTEM "URI/URL>
+   3.3 参数实体声明: ## 只能在DTD中定义和使用的实体，一般用%作为前缀。
+                   <!ENTITY % 实体名称 “实体的值”>
+                   <!ENTITY % 实体名称 SYSTEM “URI”>
+   3.4 引用公共实体：<!ENTITY 实体名称 PUBLIC “public_ID” “URI”>
+
+
+

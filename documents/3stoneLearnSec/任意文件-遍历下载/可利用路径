@@ -1,0 +1,19 @@
+/etc/shadow
+/etc/passwd
+/etc/security/password
+/etc/hosts
+/etc/hosts
+/root/.bash_history 找user add，cd，mysql，ssh，nohop看敏感目录和文件等
+/etc/syscomfig/network-scripts/ifcfg-eth1
+sed -i ‘/95_251/d’ /root/.ssh/authorized_keys
+url=file:///etc/passwd
+url=http://10.29.5.24(ssrf内网探测)
+/opt/nginx/conf/nginx.conf
+file:///,gopher://,ftp://
+/configs/database.php
+/root/.bash_history
+/home/用户名/.bash_history
+#网卡信息
+/etc/sysconfig/network-scripts/ifcfg-eth0
+/etc/sysconfig/network-scripts/ifcfg-eth1
+../../structs-config.xml

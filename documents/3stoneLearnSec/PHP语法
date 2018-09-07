@@ -1,0 +1,4 @@
+1、addslashes() 返回在预定义字符之前添加反斜杠的字符串
+2、stripslashes() 删除由addslashes()函数添加的反斜杠
+3、mysql_real_escape_string():函数转义SQL语句中的特殊字符；
+4、

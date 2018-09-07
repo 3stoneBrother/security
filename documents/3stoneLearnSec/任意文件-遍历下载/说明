@@ -1,0 +1,21 @@
+目录遍历：directory traversal
+    目录遍历：指除浏览web本目录外，能够浏览web目录外的文件；
+文件包含：File include
+    文件包含：指系统执行访问请求时，调用web本身目录外的文件，作为访问结果。
+    其中又分为LFI（本地文件包含）和RFI（远程文件包含），RFI可以放一个远程木马文件，
+    访问中RFI包含远程木马文件，此时访问能被直接执行，拿到shell。
+
+1、最终取得文件
+   1.1 敏感文件
+   /etc/passwd
+   /etc/shaddow
+   /WEB-INF/decorators.xml
+   /WEB-INF/glue-config.xml
+   /WEB-INF/server-config.wsdd
+   /WEB-INF/sitemesh.xml
+   /WEB-INF/urlrewrite.xml
+   /WEB-INF/web.xml
+   index.php
+   /.ssh/authorized_keys
+2、文件可能会存在对文件后缀对检测
+3、可能会存在 ../ 替换为空

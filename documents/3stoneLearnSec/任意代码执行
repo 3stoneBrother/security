@@ -1,0 +1,4 @@
+1、将字符串转化为代码去执行的相关函数
+   PHP ===> eval( ),assert( )
+   python ===> exec( )
+   Asp ===> <%=CreateObject("wscript.shell").exec("cmd.exe /c ipconfig").StdOut.ReadAll()%>

